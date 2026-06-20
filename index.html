@@ -9,20 +9,44 @@
     <style>
         /* VARIABLES Y BASE EXACTA DEL DISEÑO ORIGINAL */
         :root { --cian: #00a8b5; --gold: #c5a059; --oscuro: rgba(2, 6, 8, 0.98); }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: transparent; overflow: hidden; font-family: 'Inter', sans-serif; color: white; display: flex; align-items: center; justify-content: center; }
         
-        /* REPRODUCTOR ESTÉTICA ORIGINAL (AJUSTADO PARA GLIDE) */
+        * { box-sizing: border-box; }
+        
+        body, html { 
+            margin: 0; 
+            padding: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: var(--oscuro); 
+            overflow: hidden; 
+            font-family: 'Inter', sans-serif; 
+            color: white; 
+        }
+        
+        /* REPRODUCTOR ESTÉTICA ORIGINAL - AJUSTADO AL 100% SIN MÁRGENES */
         #reproductor { 
-            display: flex; z-index: 200; flex-direction: column; align-items: center; 
-            background-color: var(--oscuro); backdrop-filter: blur(50px); padding: 30px 30px 40px 30px;
-            border-radius: 12px; border: 6px solid transparent;
+            display: flex; 
+            z-index: 200; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: space-between; /* Distribuye el espacio uniformemente */
+            background-color: var(--oscuro); 
+            backdrop-filter: blur(50px); 
+            padding: 5% 25px 8% 25px; /* Padding interno dinámico para no tocar los bordes */
+            border: 4px solid transparent; /* Mantenemos el borde para la animación, pero más delgado */
+            border-radius: 0; /* Eliminado para que sea 100% cuadrado a los bordes */
             background-image: linear-gradient(var(--oscuro), var(--oscuro)), linear-gradient(270deg, var(--cian), var(--gold), var(--cian), var(--gold));
-            background-origin: padding-box, border-box; background-clip: padding-box, border-box;
+            background-origin: padding-box, border-box; 
+            background-clip: padding-box, border-box;
             background-size: 100% 100%, 300% 300%;
             animation: flujoBorde 35s ease infinite;
-            width: 100%; max-width: none; height: 100%; max-height: none;
-            opacity: 1; position: relative; justify-content: center; box-sizing: border-box; overflow: hidden;
+            width: 100vw; /* Fuerza el 100% del ancho del visor */
+            height: 100vh; /* Fuerza el 100% del alto del visor */
+            opacity: 1; 
+            position: relative; 
+            overflow: hidden;
         }
+        
         @keyframes flujoBorde { 0% { background-position: 0% 0%, 0% 50%; } 50% { background-position: 0% 0%, 100% 50%; } 100% { background-position: 0% 0%, 0% 50%; } }
 
         .smoke-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; opacity: 0.5; }
@@ -32,43 +56,51 @@
         #texture-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; opacity: 0.35; mix-blend-mode: screen; }
 
         .header-brand-logo { 
-            height: 320px; max-height: 85%; width: 480px; max-width: 100%; object-fit: contain;
-            z-index: 2; margin: -15px auto 0 auto; padding: 0; display: block; flex-shrink: 1;
+            height: auto; 
+            max-height: 35vh; /* Ajuste dinámico basado en el alto de la pantalla */
+            width: 100%; 
+            max-width: 320px; 
+            object-fit: contain;
+            z-index: 2; 
+            margin: 0 auto; 
+            padding: 0; 
+            display: block; 
+            flex-shrink: 1;
             filter: brightness(0) invert(1) drop-shadow(0 0 15px rgba(0, 168, 181, 0.9)); 
         }
         
-        .track-display { text-align: center; z-index: 2; width: 100%; display: flex; flex-direction: column; justify-content: center; margin: 0 0 35px 0; padding-bottom: 0; flex-shrink: 0; }
+        .track-display { text-align: center; z-index: 2; width: 100%; display: flex; flex-direction: column; justify-content: center; flex-shrink: 0; }
         .track-name { font-family: 'Montserrat', sans-serif; font-size: 22px; font-weight: 900; letter-spacing: 2px; color: white; margin: 0; text-transform: uppercase; }
-        .track-client { font-family: 'Montserrat', sans-serif; font-size: 14px; color: var(--cian); letter-spacing: 4px; text-transform: uppercase; margin-top: 15px; font-weight: 800; }
+        .track-client { font-family: 'Montserrat', sans-serif; font-size: 14px; color: var(--cian); letter-spacing: 4px; text-transform: uppercase; margin-top: 10px; font-weight: 800; }
 
-        .bottom-controls-group { width: 100%; display: flex; flex-direction: column; align-items: center; z-index: 5; margin-top: 0; margin-bottom: 0; flex-shrink: 0; }
-        .controls-row { display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 20px; box-sizing: border-box; }
+        .bottom-controls-group { width: 100%; display: flex; flex-direction: column; align-items: center; z-index: 5; flex-shrink: 0; }
+        .controls-row { display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 25px; box-sizing: border-box; }
         
-        .btn-sec { background: rgba(0, 0, 0, 0.4); border: 1.5px solid rgba(197, 160, 89, 0.5); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; padding: 0; position: relative; flex-shrink: 0; }
-        .btn-main { width: 68px; height: 68px; border: 3.5px solid var(--cian); background: rgba(0, 168, 181, 0.1); border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 30px rgba(0, 168, 181, 0.4); transition: 0.3s; padding: 0; margin: 0; position: relative; flex-shrink: 0; }
+        .btn-sec { background: rgba(0, 0, 0, 0.4); border: 1.5px solid rgba(197, 160, 89, 0.5); width: 45px; height: 45px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; padding: 0; position: relative; flex-shrink: 0; }
+        .btn-main { width: 75px; height: 75px; border: 3.5px solid var(--cian); background: rgba(0, 168, 181, 0.1); border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 30px rgba(0, 168, 181, 0.4); transition: 0.3s; padding: 0; margin: 0; position: relative; flex-shrink: 0; }
         
-        .btn-sec svg { width: 18px; fill: var(--gold); pointer-events: none; transition: 0.3s; }
-        .btn-main svg { width: 30px; fill: var(--cian); pointer-events: none; transition: 0.3s; }
+        .btn-sec svg { width: 20px; fill: var(--gold); pointer-events: none; transition: 0.3s; }
+        .btn-main svg { width: 34px; fill: var(--cian); pointer-events: none; transition: 0.3s; }
 
-        .btn-sec:hover { background: rgba(197, 160, 89, 0.15); border-color: var(--gold); box-shadow: 0 0 15px rgba(197, 160, 89, 0.6), inset 0 0 8px rgba(197, 160, 89, 0.3); transform: scale(1.05); }
-        .btn-sec:hover svg { filter: drop-shadow(0 0 5px var(--gold)); }
-        .btn-main:hover { background: rgba(0, 168, 181, 0.25); box-shadow: 0 0 40px rgba(0, 168, 181, 0.9), inset 0 0 15px rgba(0, 168, 181, 0.5); transform: scale(1.05); }
-        .btn-main:hover svg { filter: drop-shadow(0 0 8px var(--cian)); }
+        .btn-sec:hover, .btn-sec:active { background: rgba(197, 160, 89, 0.15); border-color: var(--gold); box-shadow: 0 0 15px rgba(197, 160, 89, 0.6), inset 0 0 8px rgba(197, 160, 89, 0.3); transform: scale(1.05); }
+        .btn-sec:hover svg, .btn-sec:active svg { filter: drop-shadow(0 0 5px var(--gold)); }
+        .btn-main:hover, .btn-main:active { background: rgba(0, 168, 181, 0.25); box-shadow: 0 0 40px rgba(0, 168, 181, 0.9), inset 0 0 15px rgba(0, 168, 181, 0.5); transform: scale(1.05); }
+        .btn-main:hover svg, .btn-main:active svg { filter: drop-shadow(0 0 8px var(--cian)); }
 
-        .progress-container { width: 100%; height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 5px; cursor: pointer; margin-bottom: 20px; position: relative; z-index: 5; transition: 0.3s; }
-        .progress-container:hover { background: rgba(255, 255, 255, 0.2); box-shadow: 0 0 15px rgba(0, 168, 181, 0.5); }
+        .progress-container { width: 100%; height: 8px; background: rgba(255, 255, 255, 0.1); border-radius: 5px; cursor: pointer; margin-bottom: 25px; position: relative; z-index: 5; transition: 0.3s; }
+        .progress-container:hover, .progress-container:active { background: rgba(255, 255, 255, 0.2); box-shadow: 0 0 15px rgba(0, 168, 181, 0.5); }
         .progress-bar { height: 100%; width: 0%; background: var(--cian); border-radius: 5px; position: relative; }
-        .progress-handle { position: absolute; right: -5px; top: 50%; transform: translateY(-50%); width: 10px; height: 10px; background: rgba(0, 168, 181, 0.2); border: 1.5px solid var(--cian); border-radius: 50%; box-shadow: 0 0 12px rgba(0, 168, 181, 0.9), inset 0 0 4px rgba(0, 168, 181, 0.6); opacity: 0; transition: transform 0.2s ease, opacity 0.2s ease; pointer-events: none; }
-        .progress-container:hover .progress-handle { opacity: 1; transform: translateY(-50%) scale(1.1); }
+        .progress-handle { position: absolute; right: -6px; top: 50%; transform: translateY(-50%); width: 12px; height: 12px; background: rgba(0, 168, 181, 0.2); border: 2px solid var(--cian); border-radius: 50%; box-shadow: 0 0 12px rgba(0, 168, 181, 0.9), inset 0 0 4px rgba(0, 168, 181, 0.6); opacity: 1; transition: transform 0.2s ease, opacity 0.2s ease; pointer-events: none; }
+        .progress-container:hover .progress-handle, .progress-container:active .progress-handle { transform: translateY(-50%) scale(1.2); }
 
         .gallery-container { position: relative; width: 100%; z-index: 10; }
-        #gallery-modal { position: absolute; bottom: 100%; left: 0; width: 100%; background: #010808; border-radius: 20px; border: 1.5px solid var(--cian); opacity: 0; transform: translateY(15px); transition: 0.4s; overflow-y: auto; max-height: 250px; pointer-events: none; }
-        #gallery-modal.active-modal { opacity: 1; transform: translateY(-10px); max-height: 250px; padding: 10px 0; pointer-events: auto; }
+        #gallery-modal { position: absolute; bottom: 100%; left: 0; width: 100%; background: #010808; border-radius: 20px 20px 0 0; border: 1.5px solid var(--cian); border-bottom: none; opacity: 0; transform: translateY(15px); transition: 0.4s; overflow-y: auto; max-height: 250px; pointer-events: none; }
+        #gallery-modal.active-modal { opacity: 1; transform: translateY(0); max-height: 250px; padding: 10px 0; pointer-events: auto; }
         
-        .btn-gallery { background: rgba(0, 168, 181, 0.05); border: 2px solid var(--cian); color: #ffffff; padding: 16px 0; width: 100%; border-radius: 30px; font-size: 14px; cursor: pointer; letter-spacing: 4px; font-weight: 900; text-transform: uppercase; font-family: 'Montserrat', sans-serif; transition: 0.3s; }
-        .btn-gallery:hover { background: rgba(0, 168, 181, 0.15); box-shadow: 0 0 20px rgba(0, 168, 181, 0.6), inset 0 0 10px rgba(0, 168, 181, 0.3); text-shadow: 0 0 8px rgba(255, 255, 255, 0.8); transform: scale(1.02); }
+        .btn-gallery { background: rgba(0, 168, 181, 0.05); border: 2px solid var(--cian); color: #ffffff; padding: 18px 0; width: 100%; border-radius: 30px; font-size: 14px; cursor: pointer; letter-spacing: 4px; font-weight: 900; text-transform: uppercase; font-family: 'Montserrat', sans-serif; transition: 0.3s; }
+        .btn-gallery:hover, .btn-gallery:active { background: rgba(0, 168, 181, 0.15); box-shadow: 0 0 20px rgba(0, 168, 181, 0.6), inset 0 0 10px rgba(0, 168, 181, 0.3); text-shadow: 0 0 8px rgba(255, 255, 255, 0.8); transform: scale(1.02); }
 
-        .track-item { padding: 14px 20px; border-bottom: 1px solid rgba(0,168,181,0.1); cursor: pointer; font-size: 12px; font-family: 'Inter', sans-serif; font-weight: 600;}
+        .track-item { padding: 16px 20px; border-bottom: 1px solid rgba(0,168,181,0.1); cursor: pointer; font-size: 13px; font-family: 'Inter', sans-serif; font-weight: 600;}
         .track-item:hover { background: rgba(0, 168, 181, 0.1); color: var(--cian); }
     </style>
 </head>
@@ -112,15 +144,12 @@
     // =====================================================================
     // INTEGRACIÓN CON GLIDE:
     // Reemplaza [GLIDE_JSON_AUDIOS] usando una columna Template en Glide.
-    // El formato debe ser un arreglo JSON estricto. 
-    // Ejemplo: [{"name": "Pista 1", "audioUrl": "https://..."}]
     // =====================================================================
     const rawGlideData = `[GLIDE_JSON_AUDIOS]`; 
     
     let playlist = [];
     let originalPlaylistOrder = [];
     
-    // Fallback de seguridad por si Glide aún no inyecta los datos correctamente
     try {
         playlist = JSON.parse(rawGlideData);
         originalPlaylistOrder = [...playlist];
@@ -138,7 +167,6 @@
     const audio = document.getElementById('audio-sub');
     const playIconPath = document.getElementById('play-icon-path');
 
-    // Inicializar reproductor
     function cargarAudio(index) { 
         if (playlist.length === 0 || !playlist[index].audioUrl) return;
         currentIndex = index; 
@@ -148,7 +176,6 @@
         audio.load(); 
     }
 
-    // Renderizar Galería Modal
     function renderizarGaleria() {
         const contenedor = document.getElementById('lista-audios');
         contenedor.innerHTML = '';
@@ -158,14 +185,13 @@
             div.innerText = track.name.toUpperCase();
             div.onclick = () => {
                 cargarAudio(idx);
-                togglePlay(); // Reproducir automáticamente al seleccionar
+                togglePlay(); 
                 document.getElementById('gallery-modal').classList.remove('active-modal');
             };
             contenedor.appendChild(div);
         });
     }
 
-    // Controles Play / Pausa
     function togglePlay() { 
         if(playlist.length === 0 || !playlist[0].audioUrl) return;
         if (audio.paused) { 
@@ -178,7 +204,6 @@
         } 
     }
 
-    // Controles Pistas
     function ejecutarSiguiente() {
         if(playlist.length === 0) return;
         let n = (currentIndex + 1) % playlist.length;
@@ -193,7 +218,6 @@
         setTimeout(() => { if (!audio.paused || playIconPath.getAttribute('d').includes('M6,19')) togglePlay(); }, 50);
     }
 
-    // Lógica Barra de Progreso
     const progCont = document.getElementById('prog-cont');
     const progressBar = document.getElementById('progress-bar');
     const progressHandle = document.getElementById('progress-handle');
@@ -228,7 +252,6 @@
         isDraggingProgress = true;
         const clientX = e.touches ? e.touches[0].clientX : e.clientX;
         actualizarPosicionProgreso(clientX);
-        if (progressHandle) progressHandle.style.opacity = '1';
     }
 
     function moverArrastre(e) {
@@ -245,7 +268,6 @@
         if (pos !== undefined) {
             audio.currentTime = pos * audio.duration;
         }
-        if (progressHandle) progressHandle.style.opacity = '';
     }
 
     progCont.addEventListener('mousedown', iniciarArrastre);
@@ -255,7 +277,6 @@
     window.addEventListener('touchmove', moverArrastre, { passive: true });
     window.addEventListener('touchend', finalizarArrastre);
 
-    // Asignación de Eventos Botones
     document.getElementById('btn-play-pause').onclick = togglePlay;
     document.getElementById('btn-next').onclick = ejecutarSiguiente;
     document.getElementById('btn-prev').onclick = ejecutarAnterior;
@@ -281,7 +302,6 @@
         modal.classList.toggle('active-modal');
     };
 
-    // Inicializar reproductor visualmente
     renderizarGaleria();
     cargarAudio(0);
 </script>
