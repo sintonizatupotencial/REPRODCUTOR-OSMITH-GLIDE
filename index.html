@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Osmith Glide Player</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --cian: #00a8b5; 
+            --gold: #c5a059; 
+            --oscuro: rgba(2, 6, 8, 0.98); 
+        }
+        
+        body, html { 
+            margin: 0; padding: 0; 
+            width: 100%; height: 100%; 
+            background: transparent; /* Ideal para Glide */
+            overflow: hidden; 
+            font-family: 'Inter', sans-serif; 
+            color: white; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #reproductor { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            background-color: var(--oscuro); 
+            backdrop-filter: blur(50px); 
+            padding: 30px;
+            border-radius: 50px; 
+            border: 6px solid transparent;
+            background-image: linear-gradient(var(--oscuro), var(--oscuro)), linear-gradient(270deg, var(--cian), var(--gold), var(--cian), var(--gold));
+            background-origin: padding-box, border-box; 
+            background-clip: padding-box, border-box;
+            background-size: 100% 100%, 300% 300%;
+            animation: flujoBorde 35s ease infinite;
+            width: 90vw; 
+            max-width: 350px; 
+            position: relative; 
+            box-sizing: border-box; 
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        @keyframes flujoBorde { 
+            0% { background-position: 0% 0%, 0% 50%; } 
+            50% { background-position: 0% 0%, 100% 50%; } 
+            100% { background-position: 0% 0%, 0% 50%; } 
+        }
+
+        /* Efecto de Humo */
+        .smoke-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; opacity: 0.5; }
+        .smoke-layer { position: absolute; width: 200%; height: 200%; top: -50%; left: -50%; background-image: radial-gradient(circle at 20% 30%, var(--cian) 0%, transparent 40%), radial-gradient(circle at 80% 70%, var(--gold) 0%, transparent 40%); filter: blur(60px); animation: smokeMove 40s linear infinite; }
+        @keyframes smokeMove { 0% { transform: rotate(0deg); } 50% { transform: rotate(180deg) translate(-5%, 5%); } 100% { transform: rotate(360deg); } }
+
+        .header-brand-logo { 
+            height: 180px; 
+            width: 100%;
+            object-fit: contain;
+            z-index: 2; 
+            margin: 0 auto 20px auto; 
+            filter: brightness(0) invert(1) drop-shadow(0 0 15px rgba(0, 168, 181, 0.9)); 
+        }
+        
+        .track-display { 
+            text-align: center; 
+            z-index: 2; 
+            width: 100%; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            margin-bottom: 30px; 
+        }
+        
+        .track-name { font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 900; letter-spacing: 2px; color: white; margin: 0; text-transform: uppercase; }
+        .track-client { font-family: 'Montserrat', sans-serif; font-size: 12px; color: var(--cian); letter-spacing: 4px; text-transform: uppercase; margin-top: 10px; font-weight: 800; }
+
+        .bottom-controls-group { width: 100%; display: flex; flex-direction: column; align-items: center; z-index: 5; }
+        .controls-row { display: flex; align-items: center; justify-content: space-evenly; width: 100%; margin-bottom: 25px; }
+        
+        .btn-sec { background: rgba(0, 0, 0, 0.4); border: 1.5px solid rgba(197, 160, 89, 0.5); width: 45px; height: 45px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; padding: 0; }
+        .btn-main { width: 70px; height: 70px; border: 3.5px solid var(--cian); background: rgba(0, 168, 181, 0.1); border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 30px rgba(0, 168, 181, 0.4); transition: 0.3s; padding: 0; }
+        
+        .btn-sec svg { width: 20px; fill: var(--gold); pointer-events: none; transition: 0.3s; }
+        .btn-main svg { width: 32px; fill: var(--cian); pointer-events: none; transition: 0.3s; }
+
+        .btn-sec:hover, .btn-sec:active { background: rgba(197, 160, 89, 0.15); border-color: var(--gold); box-shadow: 0 0 15px rgba(197, 160, 89, 0.6); transform: scale(1.05); }
+        .btn-main:hover, .btn-main:active { background: rgba(0, 168, 181, 0.25); box-shadow: 0 0 40px rgba(0, 168, 181, 0.9); transform: scale(1.05); }
+
+        .progress-container { width: 100%; height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 5px; cursor: pointer; margin-bottom: 10px; position: relative; z-index: 5; }
+        .progress-bar { height: 100%; width: 0%; background: var(--cian); border-radius: 5px; position: relative; }
+        
+        .progress-handle { position: absolute; right: -5px; top: 50%; transform: translateY(-50%); width: 12px; height: 12px; background: var(--cian); border-radius: 50%; box-shadow: 0 0 12px rgba(0, 168, 181, 0.9); pointer-events: none; }
+        
+        .time-display { display: flex; justify-content: space-between; width: 100%; font-size: 11px; font-family: 'Montserrat', sans-serif; color: rgba(255,255,255,0.6); font-weight: 600; letter-spacing: 1px; z-index: 5;}
+    </style>
+</head>
+<body>
+
+    <div id="reproductor">
+        <!-- Fondo animado -->
+        <div class="smoke-overlay"><div class="smoke-layer"></div></div>
+        
+        <!-- Logo (Puedes cambiar la URL en Glide) -->
+        <img src="https://i.imgur.com/your-logo-here.png" alt="Osmith Logo" class="header-brand-logo" onerror="this.style.display='none'">
+
+        <!-- Textos -->
+        <div class="track-display">
+            <h1 class="track-name" id="display-name">Cargando...</h1>
+            <div class="track-client" id="display-client">SUBLIMINAL</div>
+        </div>
+
+        <!-- Controles -->
+        <div class="bottom-controls-group">
+            
+            <div class="progress-container" id="prog-cont">
+                <div class="progress-bar" id="progress-bar">
+                    <div class="progress-handle"></div>
+                </div>
+            </div>
+            <div class="time-display">
+                <span id="time-current">00:00</span>
+                <span id="time-total">00:00</span>
+            </div>
+
+            <div class="controls-row" style="margin-top: 20px;">
+                <!-- Anterior -->
+                <button class="btn-sec" id="btn-prev"><svg viewBox="0 0 24 24"><path d="M6,6h2v12H6V6z M9.5,12l8.5,6V6L9.5,12z"/></svg></button>
+                
+                <!-- Play / Pausa -->
+                <button class="btn-main" id="btn-play-pause"><svg viewBox="0 0 24 24"><path id="play-icon-path" d="M8,5.14V19.14L19,12.14L8,5.14Z"/></svg></button>
+                
+                <!-- Siguiente -->
+                <button class="btn-sec" id="btn-next"><svg viewBox="0 0 24 24"><path d="M6,18l8.5-6L6,6V18z M16,6v12h2V6H16z"/></svg></button>
+                
+                <!-- Bucle -->
+                <button class="btn-sec" id="btn-loop"><svg viewBox="0 0 24 24"><path d="M7,7h10v3l4-4l-4-4v3H5v6h2V7z M17,17H7v-3l-4,4l4,4v-3h12v-6h-2V17z"/></svg></button>
+            </div>
+        </div>
+        
+        <!-- Elemento nativo oculto -->
+        <audio id="audio-sub" preload="auto"></audio>
+    </div>
+
+<script>
+    // -------------------------------------------------------------
+    // CONFIGURACIÓN DE PISTAS (Sustituir con valores de Glide)
+    // -------------------------------------------------------------
+    const playlist = [
+        { name: "SINTONIZA TU POTENCIAL", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
+        { name: "ABUNDANCIA INFINITA", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" }
+    ];
+    
+    // Variables de estado
+    let currentIndex = 0; 
+    let isLooping = false;
+    let isDragging = false;
+
+    const audio = document.getElementById('audio-sub');
+    const playPath = document.getElementById('play-icon-path');
+    const progressBar = document.getElementById('progress-bar');
+    const progCont = document.getElementById('prog-cont');
+    const timeCurrent = document.getElementById('time-current');
+    const timeTotal = document.getElementById('time-total');
+
+    // Inicializar reproductor
+    function cargarAudio(index) { 
+        if (playlist.length === 0) return;
+        currentIndex = index; 
+        audio.src = playlist[index].audioUrl; 
+        document.getElementById('display-name').innerText = playlist[index].name; 
+        progressBar.style.width = '0%';
+        timeCurrent.innerText = "00:00";
+        audio.load(); 
+    }
+
+    // Formatear el tiempo a MM:SS
+    function formatTime(seconds) {
+        if (isNaN(seconds)) return "00:00";
+        const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+        const s = Math.floor(seconds % 60).toString().padStart(2, '0');
+        return `${m}:${s}`;
+    }
+
+    // Actualización de progreso y tiempos
+    audio.addEventListener('loadedmetadata', () => {
+        timeTotal.innerText = formatTime(audio.duration);
+    });
+
+    audio.addEventListener('timeupdate', () => {
+        if (audio.duration && !isDragging) {
+            const pct = (audio.currentTime / audio.duration) * 100;
+            progressBar.style.width = `${pct}%`;
+            timeCurrent.innerText = formatTime(audio.currentTime);
+        }
+    });
+
+    // Finalización de pista
+    audio.addEventListener('ended', () => {
+        if (isLooping) {
+            audio.currentTime = 0;
+            audio.play();
+        } else {
+            ejecutarSiguiente();
+        }
+    });
+
+    // Play / Pausa
+    function togglePlay() { 
+        if(playlist.length === 0) return;
+        if (audio.paused) { 
+            audio.play();
+            // Icono de Pausa
+            playPath.setAttribute('d', 'M6,19h4V5H6V19z M14,5v14h4V5H14z'); 
+        } else { 
+            audio.pause(); 
+            // Icono de Play
+            playPath.setAttribute('d', 'M8,5.14V19.14L19,12.14L8,5.14Z'); 
+        } 
+    }
+
+    // Controles de Pistas
+    function ejecutarSiguiente() {
+        if(playlist.length === 0) return;
+        cargarAudio((currentIndex + 1) % playlist.length);
+        setTimeout(() => { if(!audio.paused || playPath.getAttribute('d').includes('M6,19')) togglePlay(); }, 50);
+    }
+
+    function ejecutarAnterior() {
+        if(playlist.length === 0) return;
+        cargarAudio((currentIndex - 1 + playlist.length) % playlist.length);
+        setTimeout(() => { if(!audio.paused || playPath.getAttribute('d').includes('M6,19')) togglePlay(); }, 50);
+    }
+
+    // Bucle
+    function toggleLoop() {
+        isLooping = !isLooping;
+        audio.loop = isLooping;
+        document.getElementById('btn-loop').style.borderColor = isLooping ? 'var(--cian)' : 'rgba(197, 160, 89, 0.5)';
+        document.getElementById('btn-loop').style.background = isLooping ? 'rgba(0, 168, 181, 0.2)' : 'rgba(0, 0, 0, 0.4)';
+    }
+
+    // Lógica de la barra de progreso (Drag / Click)
+    function setProgress(clientX) {
+        if (!audio.duration) return;
+        const rect = progCont.getBoundingClientRect();
+        let pos = (clientX - rect.left) / rect.width;
+        pos = Math.max(0, Math.min(1, pos));
+        progressBar.style.width = `${pos * 100}%`;
+        timeCurrent.innerText = formatTime(pos * audio.duration);
+        return pos;
+    }
+
+    progCont.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        setProgress(e.clientX);
+    });
+    window.addEventListener('mousemove', (e) => {
+        if (isDragging) setProgress(e.clientX);
+    });
+    window.addEventListener('mouseup', (e) => {
+        if (isDragging) {
+            isDragging = false;
+            const pos = setProgress(e.clientX);
+            audio.currentTime = pos * audio.duration;
+        }
+    });
+
+    // Soporte Touch para móviles en la barra
+    progCont.addEventListener('touchstart', (e) => {
+        isDragging = true;
+        setProgress(e.touches[0].clientX);
+    }, { passive: true });
+    window.addEventListener('touchmove', (e) => {
+        if (isDragging) setProgress(e.touches[0].clientX);
+    }, { passive: true });
+    window.addEventListener('touchend', (e) => {
+        if (isDragging) {
+            isDragging = false;
+            const pos = setProgress(e.changedTouches[0].clientX);
+            audio.currentTime = pos * audio.duration;
+        }
+    });
+
+    // Asignar eventos a los botones
+    document.getElementById('btn-play-pause').onclick = togglePlay;
+    document.getElementById('btn-next').onclick = ejecutarSiguiente;
+    document.getElementById('btn-prev').onclick = ejecutarAnterior;
+    document.getElementById('btn-loop').onclick = toggleLoop;
+
+    // Inicialización
+    cargarAudio(0);
+</script>
+</body>
+</html>
