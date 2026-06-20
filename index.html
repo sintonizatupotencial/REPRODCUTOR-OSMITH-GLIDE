@@ -1,309 +1,218 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Osmith Subliminal Experience - Glide Embed</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
-    <style>
-        /* VARIABLES Y BASE EXACTA DEL DISEÑO ORIGINAL */
-        :root { --cian: #00a8b5; --gold: #c5a059; --oscuro: rgba(2, 6, 8, 0.98); }
-        
-        * { box-sizing: border-box; }
-        
-        body, html { 
-            margin: 0; 
-            padding: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: var(--oscuro); 
-            overflow: hidden; 
-            font-family: 'Inter', sans-serif; 
-            color: white; 
-        }
-        
-        /* REPRODUCTOR ESTÉTICA ORIGINAL - AJUSTADO AL 100% SIN MÁRGENES */
-        #reproductor { 
-            display: flex; 
-            z-index: 200; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: space-between; /* Distribuye el espacio uniformemente */
-            background-color: var(--oscuro); 
-            backdrop-filter: blur(50px); 
-            padding: 5% 25px 8% 25px; /* Padding interno dinámico para no tocar los bordes */
-            border: 4px solid transparent; /* Mantenemos el borde para la animación, pero más delgado */
-            border-radius: 0; /* Eliminado para que sea 100% cuadrado a los bordes */
-            background-image: linear-gradient(var(--oscuro), var(--oscuro)), linear-gradient(270deg, var(--cian), var(--gold), var(--cian), var(--gold));
-            background-origin: padding-box, border-box; 
-            background-clip: padding-box, border-box;
-            background-size: 100% 100%, 300% 300%;
-            animation: flujoBorde 35s ease infinite;
-            width: 100vw; /* Fuerza el 100% del ancho del visor */
-            height: 100vh; /* Fuerza el 100% del alto del visor */
-            opacity: 1; 
-            position: relative; 
-            overflow: hidden;
-        }
-        
-        @keyframes flujoBorde { 0% { background-position: 0% 0%, 0% 50%; } 50% { background-position: 0% 0%, 100% 50%; } 100% { background-position: 0% 0%, 0% 50%; } }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  :root {
+    /* Paleta de colores subliminal/premium */
+    --bg-base: #13141c;         /* Carbón muy oscuro */
+    --surface-gradient: linear-gradient(145deg, #1a1b26, #16161e); /* Índigo profundo */
+    --accent-sage: #8b9d83;     /* Verde salvia suave */
+    --accent-glow: rgba(139, 157, 131, 0.4);
+    --text-primary: #e2e8f0;
+    --text-secondary: #64748b;
+    --glass-border: rgba(255, 255, 255, 0.05);
+  }
 
-        .smoke-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; opacity: 0.5; }
-        .smoke-layer { position: absolute; width: 200%; height: 200%; top: -50%; left: -50%; background-image: radial-gradient(circle at 20% 30%, var(--cian) 0%, transparent 40%), radial-gradient(circle at 80% 70%, var(--gold) 0%, transparent 40%); filter: blur(60px); animation: smokeMove 400s linear infinite; }
-        @keyframes smokeMove { 0% { transform: rotate(0deg); } 50% { transform: rotate(180deg) translate(-5%, 5%); } 100% { transform: rotate(360deg); } }
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
 
-        #texture-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; opacity: 0.35; mix-blend-mode: screen; }
+  /* Contenedor transparente para adaptarse al Rich Text / HTML de Glide */
+  body {
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 16px 8px;
+  }
 
-        .header-brand-logo { 
-            height: auto; 
-            max-height: 35vh; /* Ajuste dinámico basado en el alto de la pantalla */
-            width: 100%; 
-            max-width: 320px; 
-            object-fit: contain;
-            z-index: 2; 
-            margin: 0 auto; 
-            padding: 0; 
-            display: block; 
-            flex-shrink: 1;
-            filter: brightness(0) invert(1) drop-shadow(0 0 15px rgba(0, 168, 181, 0.9)); 
-        }
-        
-        .track-display { text-align: center; z-index: 2; width: 100%; display: flex; flex-direction: column; justify-content: center; flex-shrink: 0; }
-        .track-name { font-family: 'Montserrat', sans-serif; font-size: 22px; font-weight: 900; letter-spacing: 2px; color: white; margin: 0; text-transform: uppercase; }
-        .track-client { font-family: 'Montserrat', sans-serif; font-size: 14px; color: var(--cian); letter-spacing: 4px; text-transform: uppercase; margin-top: 10px; font-weight: 800; }
+  .player-wrapper {
+    width: 100%;
+    max-width: 420px;
+    background: var(--surface-gradient);
+    border-radius: 28px;
+    padding: 28px 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 1px var(--glass-border);
+    border: 1px solid var(--glass-border);
+    /* Textura dinámica suave (Glassmorphism) */
+    backdrop-filter: blur(12px);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
 
-        .bottom-controls-group { width: 100%; display: flex; flex-direction: column; align-items: center; z-index: 5; flex-shrink: 0; }
-        .controls-row { display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 25px; box-sizing: border-box; }
-        
-        .btn-sec { background: rgba(0, 0, 0, 0.4); border: 1.5px solid rgba(197, 160, 89, 0.5); width: 45px; height: 45px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; padding: 0; position: relative; flex-shrink: 0; }
-        .btn-main { width: 75px; height: 75px; border: 3.5px solid var(--cian); background: rgba(0, 168, 181, 0.1); border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 30px rgba(0, 168, 181, 0.4); transition: 0.3s; padding: 0; margin: 0; position: relative; flex-shrink: 0; }
-        
-        .btn-sec svg { width: 20px; fill: var(--gold); pointer-events: none; transition: 0.3s; }
-        .btn-main svg { width: 34px; fill: var(--cian); pointer-events: none; transition: 0.3s; }
+  /* Simulación de onda / barra de progreso minimalista */
+  .progress-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
 
-        .btn-sec:hover, .btn-sec:active { background: rgba(197, 160, 89, 0.15); border-color: var(--gold); box-shadow: 0 0 15px rgba(197, 160, 89, 0.6), inset 0 0 8px rgba(197, 160, 89, 0.3); transform: scale(1.05); }
-        .btn-sec:hover svg, .btn-sec:active svg { filter: drop-shadow(0 0 5px var(--gold)); }
-        .btn-main:hover, .btn-main:active { background: rgba(0, 168, 181, 0.25); box-shadow: 0 0 40px rgba(0, 168, 181, 0.9), inset 0 0 15px rgba(0, 168, 181, 0.5); transform: scale(1.05); }
-        .btn-main:hover svg, .btn-main:active svg { filter: drop-shadow(0 0 8px var(--cian)); }
+  .progress-track {
+    flex: 1;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+  }
 
-        .progress-container { width: 100%; height: 8px; background: rgba(255, 255, 255, 0.1); border-radius: 5px; cursor: pointer; margin-bottom: 25px; position: relative; z-index: 5; transition: 0.3s; }
-        .progress-container:hover, .progress-container:active { background: rgba(255, 255, 255, 0.2); box-shadow: 0 0 15px rgba(0, 168, 181, 0.5); }
-        .progress-bar { height: 100%; width: 0%; background: var(--cian); border-radius: 5px; position: relative; }
-        .progress-handle { position: absolute; right: -6px; top: 50%; transform: translateY(-50%); width: 12px; height: 12px; background: rgba(0, 168, 181, 0.2); border: 2px solid var(--cian); border-radius: 50%; box-shadow: 0 0 12px rgba(0, 168, 181, 0.9), inset 0 0 4px rgba(0, 168, 181, 0.6); opacity: 1; transition: transform 0.2s ease, opacity 0.2s ease; pointer-events: none; }
-        .progress-container:hover .progress-handle, .progress-container:active .progress-handle { transform: translateY(-50%) scale(1.2); }
+  .progress-fill {
+    width: 0%; /* Glide puede inyectar el porcentaje aquí */
+    height: 100%;
+    background: var(--accent-sage);
+    border-radius: 8px;
+    box-shadow: 0 0 8px var(--accent-glow);
+    /* Animación base para cuando Glide actualice el width */
+    transition: width 0.3s linear; 
+  }
 
-        .gallery-container { position: relative; width: 100%; z-index: 10; }
-        #gallery-modal { position: absolute; bottom: 100%; left: 0; width: 100%; background: #010808; border-radius: 20px 20px 0 0; border: 1.5px solid var(--cian); border-bottom: none; opacity: 0; transform: translateY(15px); transition: 0.4s; overflow-y: auto; max-height: 250px; pointer-events: none; }
-        #gallery-modal.active-modal { opacity: 1; transform: translateY(0); max-height: 250px; padding: 10px 0; pointer-events: auto; }
-        
-        .btn-gallery { background: rgba(0, 168, 181, 0.05); border: 2px solid var(--cian); color: #ffffff; padding: 18px 0; width: 100%; border-radius: 30px; font-size: 14px; cursor: pointer; letter-spacing: 4px; font-weight: 900; text-transform: uppercase; font-family: 'Montserrat', sans-serif; transition: 0.3s; }
-        .btn-gallery:hover, .btn-gallery:active { background: rgba(0, 168, 181, 0.15); box-shadow: 0 0 20px rgba(0, 168, 181, 0.6), inset 0 0 10px rgba(0, 168, 181, 0.3); text-shadow: 0 0 8px rgba(255, 255, 255, 0.8); transform: scale(1.02); }
+  .time-text {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.5px;
+  }
 
-        .track-item { padding: 16px 20px; border-bottom: 1px solid rgba(0,168,181,0.1); cursor: pointer; font-size: 13px; font-family: 'Inter', sans-serif; font-weight: 600;}
-        .track-item:hover { background: rgba(0, 168, 181, 0.1); color: var(--cian); }
-    </style>
+  /* Controles principales */
+  .controls-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0 8px;
+  }
+
+  .btn-icon {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .btn-icon:hover, .btn-icon:active {
+    color: var(--text-primary);
+    transform: scale(1.1);
+  }
+
+  /* Botón de Inicio / Pausa destacado */
+  .btn-play-pause {
+    width: 64px;
+    height: 64px;
+    background: var(--accent-sage);
+    color: var(--bg-base);
+    border-radius: 50%;
+    font-size: 1.5rem;
+    box-shadow: 0 8px 24px var(--accent-glow);
+  }
+
+  .btn-play-pause:hover, .btn-play-pause:active {
+    background: #9db294; /* Salvia un poco más claro */
+    color: var(--bg-base);
+    transform: scale(1.05) translateY(-2px);
+    box-shadow: 0 12px 28px rgba(139, 157, 131, 0.6);
+  }
+
+  .btn-loop.active {
+    color: var(--accent-sage);
+  }
+
+  /* Separador elegante */
+  .divider {
+    height: 1px;
+    width: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    margin: 4px 0;
+  }
+
+  /* Disparador visual: Mis Audios */
+  .btn-mis-audios {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-primary);
+    padding: 16px;
+    border-radius: 16px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .btn-mis-audios i {
+    color: var(--accent-sage);
+    font-size: 1.1rem;
+  }
+
+  .btn-mis-audios:hover, .btn-mis-audios:active {
+    background: rgba(139, 157, 131, 0.1);
+    border-color: rgba(139, 157, 131, 0.3);
+    transform: translateY(-2px);
+  }
+</style>
 </head>
 <body>
 
-<div id="reproductor">
-    <div class="smoke-overlay"><div class="smoke-layer"></div></div>
-    <canvas id="texture-canvas"></canvas>
-    
-    <img src="https://i.imgur.com/your-cover.png" alt="Osmith Logo" class="header-brand-logo">
+<div class="player-wrapper">
+  
+  <div class="progress-area">
+    <span class="time-text">0:00</span>
+    <div class="progress-track">
+      <div class="progress-fill" style="width: 30%;"></div>
+    </div>
+    <span class="time-text">--:--</span>
+  </div>
 
-    <div class="track-display">
-        <h1 class="track-name" id="display-name">Cargando...</h1>
-        <div class="track-client" id="display-client">[NOMBRE_CLIENTE_GLIDE]</div>
-    </div>
+  <div class="controls-row">
+    <button class="btn-icon btn-loop" aria-label="Bucle">
+      <i class="fa-solid fa-repeat"></i>
+    </button>
     
-    <div class="bottom-controls-group">
-        <div class="controls-row">
-            <button class="btn-sec" id="btn-shuffle"><svg viewBox="0 0 24 24"><path d="M10.59,9.17L5.41,4L4,5.41l5.17,5.17C9.17,10.59,10.59,9.17,10.59,9.17z M14.5,4l2.04,2.04L4,18.59L5.41,20l12.55-12.55 L20,9.5V4H14.5z M14.83,13.41l-1.41,1.41l3.13,3.13L14.5,20H20v-5.5l-2.04,2.04L14.83,13.41z"/></svg></button>
-            <button class="btn-sec" id="btn-prev"><svg viewBox="0 0 24 24"><path d="M6,6h2v12H6V6z M9.5,12l8.5,6V6L9.5,12z"/></svg></button>
-            <button class="btn-main" id="btn-play-pause"><svg viewBox="0 0 24 24"><path id="play-icon-path" d="M8,5.14V19.14L19,12.14L8,5.14Z"/></svg></button>
-            <button class="btn-sec" id="btn-next"><svg viewBox="0 0 24 24"><path d="M6,18l8.5-6L6,6V18z M16,6v12h2V6H16z"/></svg></button>
-            <button class="btn-sec" id="btn-loop"><svg viewBox="0 0 24 24"><path d="M7,7h10v3l4-4l-4-4v3H5v6h2V7z M17,17H7v-3l-4,4l4,4v-3h12v-6h-2V17z"/></svg></button>
-        </div>
-        
-        <div class="progress-container" id="prog-cont">
-            <div class="progress-bar" id="progress-bar">
-                <div class="progress-handle" id="progress-handle"></div>
-            </div>
-        </div>
-        
-        <div class="gallery-container" id="gallery-wrapper">
-            <div id="gallery-modal"><div id="lista-audios"></div></div>
-            <button class="btn-gallery" id="btn-toggle-gallery">Mis Audios</button>
-        </div>
-    </div>
-    <audio id="audio-sub" preload="auto"></audio>
+    <button class="btn-icon" aria-label="Anterior">
+      <i class="fa-solid fa-backward-step"></i>
+    </button>
+    
+    <button class="btn-icon btn-play-pause" aria-label="Inicio / Pausa">
+      <i class="fa-solid fa-play" style="margin-left: 4px;"></i>
+      </button>
+    
+    <button class="btn-icon" aria-label="Posterior">
+      <i class="fa-solid fa-forward-step"></i>
+    </button>
+    
+    <button class="btn-icon" aria-label="Detener">
+      <i class="fa-solid fa-stop"></i>
+    </button>
+  </div>
+
+  <div class="divider"></div>
+
+  <button class="btn-mis-audios" aria-label="Abrir Mis Audios">
+    <i class="fa-solid fa-layer-group"></i>
+    Mis Audios
+  </button>
+
 </div>
 
-<script>
-    // =====================================================================
-    // INTEGRACIÓN CON GLIDE:
-    // Reemplaza [GLIDE_JSON_AUDIOS] usando una columna Template en Glide.
-    // =====================================================================
-    const rawGlideData = `[GLIDE_JSON_AUDIOS]`; 
-    
-    let playlist = [];
-    let originalPlaylistOrder = [];
-    
-    try {
-        playlist = JSON.parse(rawGlideData);
-        originalPlaylistOrder = [...playlist];
-    } catch (e) {
-        playlist = [
-            { name: "Sin Audios Asignados", audioUrl: "" }
-        ];
-    }
-
-    let currentIndex = 0; 
-    let isLooping = false; 
-    let isShuffled = false;
-    let isDraggingProgress = false;
-
-    const audio = document.getElementById('audio-sub');
-    const playIconPath = document.getElementById('play-icon-path');
-
-    function cargarAudio(index) { 
-        if (playlist.length === 0 || !playlist[index].audioUrl) return;
-        currentIndex = index; 
-        audio.src = playlist[index].audioUrl; 
-        document.getElementById('display-name').innerText = playlist[index].name; 
-        document.getElementById('progress-bar').style.width = '0%';
-        audio.load(); 
-    }
-
-    function renderizarGaleria() {
-        const contenedor = document.getElementById('lista-audios');
-        contenedor.innerHTML = '';
-        playlist.forEach((track, idx) => {
-            const div = document.createElement('div');
-            div.className = 'track-item';
-            div.innerText = track.name.toUpperCase();
-            div.onclick = () => {
-                cargarAudio(idx);
-                togglePlay(); 
-                document.getElementById('gallery-modal').classList.remove('active-modal');
-            };
-            contenedor.appendChild(div);
-        });
-    }
-
-    function togglePlay() { 
-        if(playlist.length === 0 || !playlist[0].audioUrl) return;
-        if (audio.paused) { 
-            audio.play().then(() => {
-                playIconPath.setAttribute('d', 'M6,19h4V5H6V19z M14,5v14h4V5H14z'); 
-            }).catch(e => console.error(e));
-        } else { 
-            audio.pause(); 
-            playIconPath.setAttribute('d', 'M8,5.14V19.14L19,12.14L8,5.14Z'); 
-        } 
-    }
-
-    function ejecutarSiguiente() {
-        if(playlist.length === 0) return;
-        let n = (currentIndex + 1) % playlist.length;
-        cargarAudio(n);
-        setTimeout(() => { if (!audio.paused || playIconPath.getAttribute('d').includes('M6,19')) togglePlay(); }, 50);
-    }
-
-    function ejecutarAnterior() {
-        if(playlist.length === 0) return;
-        let p = (currentIndex - 1 + playlist.length) % playlist.length;
-        cargarAudio(p);
-        setTimeout(() => { if (!audio.paused || playIconPath.getAttribute('d').includes('M6,19')) togglePlay(); }, 50);
-    }
-
-    const progCont = document.getElementById('prog-cont');
-    const progressBar = document.getElementById('progress-bar');
-    const progressHandle = document.getElementById('progress-handle');
-
-    audio.addEventListener('timeupdate', () => {
-        if (audio.duration && !isDraggingProgress) {
-            const pct = (audio.currentTime / audio.duration) * 100;
-            progressBar.style.width = `${pct}%`;
-        }
-    });
-
-    audio.addEventListener('ended', () => {
-        if (isLooping) {
-            audio.currentTime = 0;
-            audio.play();
-        } else {
-            ejecutarSiguiente();
-        }
-    });
-
-    function actualizarPosicionProgreso(clientX) {
-        if (!audio.duration) return;
-        const rect = progCont.getBoundingClientRect();
-        let pos = (clientX - rect.left) / rect.width;
-        pos = Math.max(0, Math.min(1, pos));
-        progressBar.style.width = `${pos * 100}%`;
-        return pos;
-    }
-
-    function iniciarArrastre(e) {
-        if (!audio.duration) return;
-        isDraggingProgress = true;
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        actualizarPosicionProgreso(clientX);
-    }
-
-    function moverArrastre(e) {
-        if (!isDraggingProgress) return;
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        actualizarPosicionProgreso(clientX);
-    }
-
-    function finalizarArrastre(e) {
-        if (!isDraggingProgress) return;
-        isDraggingProgress = false;
-        const clientX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
-        const pos = actualizarPosicionProgreso(clientX);
-        if (pos !== undefined) {
-            audio.currentTime = pos * audio.duration;
-        }
-    }
-
-    progCont.addEventListener('mousedown', iniciarArrastre);
-    window.addEventListener('mousemove', moverArrastre);
-    window.addEventListener('mouseup', finalizarArrastre);
-    progCont.addEventListener('touchstart', iniciarArrastre, { passive: true });
-    window.addEventListener('touchmove', moverArrastre, { passive: true });
-    window.addEventListener('touchend', finalizarArrastre);
-
-    document.getElementById('btn-play-pause').onclick = togglePlay;
-    document.getElementById('btn-next').onclick = ejecutarSiguiente;
-    document.getElementById('btn-prev').onclick = ejecutarAnterior;
-
-    document.getElementById('btn-loop').onclick = () => {
-        isLooping = !isLooping;
-        document.getElementById('btn-loop').style.borderColor = isLooping ? 'var(--cian)' : 'rgba(197, 160, 89, 0.5)';
-    };
-
-    document.getElementById('btn-shuffle').onclick = () => {
-        isShuffled = !isShuffled;
-        document.getElementById('btn-shuffle').style.borderColor = isShuffled ? 'var(--cian)' : 'rgba(197, 160, 89, 0.5)';
-        if (isShuffled) {
-            playlist.sort(() => Math.random() - 0.5);
-        } else {
-            playlist = [...originalPlaylistOrder];
-        }
-        renderizarGaleria();
-    };
-
-    document.getElementById('btn-toggle-gallery').onclick = () => {
-        const modal = document.getElementById('gallery-modal');
-        modal.classList.toggle('active-modal');
-    };
-
-    renderizarGaleria();
-    cargarAudio(0);
-</script>
 </body>
 </html>
